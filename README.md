@@ -1,2 +1,16 @@
-# react-i18n-info
-React internationalization information object
+# react-i18n
+React internationalization
+
+### localeInfo
+
+### gettext
+
+### languageFrom
+
+### localeFrom
+
+### languageNameFor
+
+### languageEnglishName
+
+### getAllLocaleCodes
