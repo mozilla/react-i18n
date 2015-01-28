@@ -1,30 +1,24 @@
 var util = require("util");
 var langMap = require("langmap");
+var lang = navigator.language || navigator.userLanguage;
 
-function I18n() {
-  // this.name = this.languageNameFor(this.lang);
-  // this.engName = this.languageEnglishName(this.lang);
-  // this.lang = this.languageFrom(this.lang);
-  // this.locale = this.locale;
-  // this.direction = "ltr";
-}
 /**
 * Given a locale, return native language name e.g.
 given "th-TH" will return "ภาษาไทย"
 **/
-I18n.prototype.languageNameFor = function(locale) {
-  locale = this.languageFrom(locale);
+function languageNameFor(locale) {
+  locale = languageFrom(locale);
   return langMap[locale] ? langMap[locale].nativeName : "Unknown";
-};
+}
 
 /**
 * Given a locale, return English language name e.g.
 given "th-TH" will return "Thai"
 **/
-I18n.prototype.languageEnglishName = function(locale) {
-  locale = this.languageFrom(locale);
+function languageEnglishName(locale) {
+  locale = languageFrom(locale);
   return langMap[locale] ? langMap[locale].englishName : "Unknown";
-};
+}
 
 /**
 * Given a language code, return a locale code the OS understands.
@@ -32,7 +26,7 @@ I18n.prototype.languageEnglishName = function(locale) {
 * language: en-US
 * locale: en_US
 **/
-I18n.prototype.localeFrom = function(language) {
+function localeFrom(language) {
   if (! language || ! language.split) {
     return "";
   }
@@ -51,13 +45,13 @@ I18n.prototype.localeFrom = function(language) {
     console.error(
       util.format("Unable to map a local from language code [%s]", language));
       return language;
-    }
-  };
+  }
+}
 
 /**
 * Given a locale code, return a language code
 **/
-I18n.prototype.languageFrom = function(locale) {
+function languageFrom(locale) {
   if (!locale || !locale.split) {
     return "";
   }
@@ -73,12 +67,28 @@ I18n.prototype.languageFrom = function(locale) {
     console.error(
       util.format("Unable to map a language from locale code [%s]", locale));
       return locale;
-    }
-  };
-I18n.prototype.getAllLocaleCodes = function() { return langMap; };
+  }
+}
 
-I18n.prototype.localeInfo = function() { return {};
+function getAllLocaleCodes() {
+  return langMap;
+}
 
+var localeInfo = {
+  lang: languageFrom(lang),
+  name: languageNameFor(lang),
+  engName: languageEnglishName(lang),
+  locale: localeFrom(lang),
+  momentLang: 'langToMomentJSLang(lang)',
+  direction: 'lang_dir',
+  otherLangPrefs: 'getOtherLangPrefs(langs)',
+  alternateLangs: 'getAlternateLangSupport(localeInfo.otherLangPrefs, listOfLanguages)'
+}
+module.exports = {
+  localeInfo: localeInfo,
+  getAllLocaleCodes: getAllLocaleCodes,
+  languageFrom: languageFrom,
+  localeFrom: localeFrom,
+  languageEnglishName: languageEnglishName,
+  languageNameFor: languageNameFor
 };
-
-module.exports = new I18n();

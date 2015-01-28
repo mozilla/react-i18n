@@ -3,7 +3,7 @@
 
 var React = require("react");
 var I18N = require("./../lib/I18N");
-console.log(I18N);
+
 var L10N = React.createClass({
   displayName: "L10N",
   render: function () {
@@ -20,37 +20,81 @@ var L10N = React.createClass({
       React.createElement(
         "p",
         null,
-        I18N
+        "lang: ",
+        I18N.localeInfo.lang
+      ),
+      React.createElement(
+        "p",
+        null,
+        "name: ",
+        I18N.localeInfo.name
+      ),
+      React.createElement(
+        "p",
+        null,
+        "engName: ",
+        I18N.localeInfo.engName
+      ),
+      React.createElement(
+        "p",
+        null,
+        "locale: ",
+        I18N.localeInfo.locale
+      ),
+      React.createElement(
+        "p",
+        null,
+        "momentLang: ",
+        I18N.localeInfo.momentLang
+      ),
+      React.createElement(
+        "p",
+        null,
+        "direction: ",
+        I18N.localeInfo.direction
+      ),
+      React.createElement(
+        "p",
+        null,
+        "otherLangPrefs: ",
+        I18N.localeInfo.otherLangPrefs
+      ),
+      React.createElement(
+        "p",
+        null,
+        "alternateLangs: ",
+        I18N.localeInfo.alternateLangs
       ),
       React.createElement("hr", null),
       React.createElement(
         "p",
         null,
-        I18N.localeFrom("th-TH"),
-        " Hello world"
+        "localeFrom: ",
+        I18N.localeFrom("th-TH")
       ),
       React.createElement(
         "p",
         null,
-        I18N.languageFrom("th-TH"),
-        " Hello world"
+        "languageFrom: ",
+        I18N.languageFrom("th-TH")
       ),
       React.createElement(
         "p",
         null,
-        I18N.languageNameFor("th-TH"),
-        " Hello world"
+        "languageNameFor: ",
+        I18N.languageNameFor("th-TH")
       ),
       React.createElement(
         "p",
         null,
-        I18N.languageEnglishName("th-TH"),
-        " Hello world"
+        "languageEnglishName: ",
+        I18N.languageEnglishName("th-TH")
       ),
       React.createElement(
         "p",
         null,
-        I18N.getAllLocaleCodes()
+        "getAllLocaleCodes(): ",
+        I18N.getAllLocaleCodes().ar.nativeName
       )
     );
   }
@@ -63,25 +107,25 @@ React.render(React.createElement(L10N, null), document.getElementById("app"));
 
 var util = require("util");
 var langMap = require("langmap");
+var lang = navigator.language || navigator.userLanguage;
 
-function I18n() {}
 /**
 * Given a locale, return native language name e.g.
 given "th-TH" will return "ภาษาไทย"
 **/
-I18n.prototype.languageNameFor = function (locale) {
-  locale = this.languageFrom(locale);
+function languageNameFor(locale) {
+  locale = languageFrom(locale);
   return langMap[locale] ? langMap[locale].nativeName : "Unknown";
-};
+}
 
 /**
 * Given a locale, return English language name e.g.
 given "th-TH" will return "Thai"
 **/
-I18n.prototype.languageEnglishName = function (locale) {
-  locale = this.languageFrom(locale);
+function languageEnglishName(locale) {
+  locale = languageFrom(locale);
   return langMap[locale] ? langMap[locale].englishName : "Unknown";
-};
+}
 
 /**
 * Given a language code, return a locale code the OS understands.
@@ -89,7 +133,7 @@ I18n.prototype.languageEnglishName = function (locale) {
 * language: en-US
 * locale: en_US
 **/
-I18n.prototype.localeFrom = function (language) {
+function localeFrom(language) {
   if (!language || !language.split) {
     return "";
   }
@@ -108,12 +152,12 @@ I18n.prototype.localeFrom = function (language) {
     console.error(util.format("Unable to map a local from language code [%s]", language));
     return language;
   }
-};
+}
 
 /**
 * Given a locale code, return a language code
 **/
-I18n.prototype.languageFrom = function (locale) {
+function languageFrom(locale) {
   if (!locale || !locale.split) {
     return "";
   }
@@ -129,21 +173,30 @@ I18n.prototype.languageFrom = function (locale) {
     console.error(util.format("Unable to map a language from locale code [%s]", locale));
     return locale;
   }
-};
-I18n.prototype.getAllLocaleCodes = function () {
+}
+
+function getAllLocaleCodes() {
   return langMap;
-};
+}
 
-I18n.prototype.localeInfo = function () {
-  return {};
+var localeInfo = {
+  lang: languageFrom(lang),
+  name: languageNameFor(lang),
+  engName: languageEnglishName(lang),
+  locale: localeFrom(lang),
+  momentLang: "langToMomentJSLang(lang)",
+  direction: "lang_dir",
+  otherLangPrefs: "getOtherLangPrefs(langs)",
+  alternateLangs: "getAlternateLangSupport(localeInfo.otherLangPrefs, listOfLanguages)"
 };
-
-module.exports = new I18n();
-// this.name = this.languageNameFor(this.lang);
-// this.engName = this.languageEnglishName(this.lang);
-// this.lang = this.languageFrom(this.lang);
-// this.locale = this.locale;
-// this.direction = "ltr";
+module.exports = {
+  localeInfo: localeInfo,
+  getAllLocaleCodes: getAllLocaleCodes,
+  languageFrom: languageFrom,
+  localeFrom: localeFrom,
+  languageEnglishName: languageEnglishName,
+  languageNameFor: languageNameFor
+};
 
 },{"langmap":7,"util":6}],3:[function(require,module,exports){
 if (typeof Object.create === 'function') {
